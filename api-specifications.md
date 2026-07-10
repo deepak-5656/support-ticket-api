@@ -215,7 +215,43 @@ Adds a new ticket type into the queue.
 
 ---
 
-# 7️⃣ View Single Ticket
+# 7️⃣ Create Standalone Ticket
+
+### POST `/tickets`
+
+Creates a ticket without needing a queue. You can optionally assign it to a queue.
+
+### Request
+
+```json
+{
+  "title": "Database Timeout",
+  "complexity": 80,
+  "quantity": 1,
+  "queue_id": "uuid (optional)"
+}
+```
+
+### Rules
+
+* `quantity` > 0
+* `complexity` >= 0
+* If `queue_id` provided, queue must exist and capacity must not be exceeded.
+
+### Response
+
+```json
+{
+  "id": "uuid",
+  "title": "Database Timeout",
+  "complexity": 80,
+  "quantity": 1
+}
+```
+
+---
+
+# 8️⃣ View Single Ticket
 
 ### GET `/tickets/{ticket_id}`
 
@@ -233,7 +269,7 @@ Adds a new ticket type into the queue.
 
 ---
 
-# 8️⃣ Update Complexity for a Ticket
+# 9️⃣ Update Complexity for a Ticket
 
 ### PATCH `/tickets/{ticket_id}/complexity`
 
@@ -259,7 +295,7 @@ Adds a new ticket type into the queue.
 
 ---
 
-# 9️⃣ Remove Tickets from Queue (Partial Removal)
+# 1️⃣0️⃣ Remove Tickets from Queue (Partial Removal)
 
 ### DELETE `/queues/{queue_id}/tickets/{ticket_id}`
 
@@ -286,7 +322,7 @@ Removes quantity or entire ticket batch.
 
 ---
 
-# 1️⃣0️⃣ Bulk Remove Tickets / Empty Queue
+# 1️⃣1️⃣ Bulk Remove Tickets / Empty Queue
 
 ### DELETE `/queues/{queue_id}/tickets`
 
@@ -313,7 +349,7 @@ Removes quantity or entire ticket batch.
 
 ---
 
-# 1️⃣1️⃣ Full View (Queues + Tickets)
+# 1️⃣2️⃣ Full View (Queues + Tickets)
 
 ### GET `/queues/full-view`
 
@@ -339,7 +375,7 @@ Removes quantity or entire ticket batch.
 
 ---
 
-# 1️⃣2️⃣ Resolve Ticket
+# 1️⃣3️⃣ Resolve Ticket
 
 This is where the fun logic lives.
 

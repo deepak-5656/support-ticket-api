@@ -61,6 +61,7 @@ Docs: http://127.0.0.1:8000/docs
 - `POST /queues/{queue_id}/tickets` – add ticket batch to queue
 - `POST /queues/{queue_id}/tickets/bulk` – bulk add tickets
 - `GET /queues/{queue_id}/tickets` – list tickets in queue
+- `POST /tickets` – create standalone ticket
 - `GET /tickets/{ticket_id}` – get single ticket
 - `PATCH /tickets/{ticket_id}/complexity` – update ticket complexity
 - `DELETE /queues/{queue_id}/tickets/{ticket_id}` – remove ticket or quantity

@@ -4,6 +4,8 @@ from sqlalchemy.orm import Session
 from app.db import get_db
 from app.schemas import (
     BulkRemoveBody,
+    TicketCreateStandalone,
+    TicketResponse,
     TicketDetailResponse,
     TicketComplexityUpdate,
     MessageResponse,
@@ -19,6 +21,27 @@ def _queue_404():
 
 def _ticket_404():
     raise HTTPException(status_code=404, detail="Ticket not found")
+
+
+@router.post("/tickets", response_model=TicketResponse, status_code=201)
+def create_ticket(data: TicketCreateStandalone, db: Session = Depends(get_db)):
+    try:
+        ticket = ticket_service.create_ticket(db, data)
+        return TicketResponse(
+            id=ticket.id,
+            title=ticket.title,
+            complexity=ticket.complexity,
+            quantity=ticket.quantity,
+        )
+    except ValueError as e:
+        if str(e) == "queue_not_found":
+            _queue_404()
+        if str(e) == "capacity_exceeded":
+            raise HTTPException(
+                status_code=400,
+                detail="Total tickets would exceed queue capacity",
+            )
+        raise
 
 
 @router.get("/tickets/{ticket_id}", response_model=TicketDetailResponse)

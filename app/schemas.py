@@ -23,6 +23,13 @@ class TicketCreate(BaseModel):
     quantity: int = Field(..., gt=0)
 
 
+class TicketCreateStandalone(BaseModel):
+    title: str
+    complexity: int = Field(..., ge=0)
+    quantity: int = Field(..., gt=0)
+    queue_id: str | None = None
+
+
 class TicketBulkEntry(BaseModel):
     title: str
     complexity: int = Field(..., ge=0)

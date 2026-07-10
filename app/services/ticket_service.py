@@ -3,7 +3,39 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.models import Ticket, Queue
-from app.schemas import TicketBulkEntry, TicketCreate
+from app.schemas import TicketBulkEntry, TicketCreate, TicketCreateStandalone
+
+
+def create_ticket(db: Session, data: TicketCreateStandalone) -> Ticket:
+    if data.queue_id:
+        queue = db.query(Queue).filter(Queue.id == data.queue_id).first()
+        if not queue:
+            raise ValueError("queue_not_found")
+        if queue.current_ticket_count + data.quantity > queue.capacity:
+            raise ValueError("capacity_exceeded")
+        if queue.current_ticket_count + data.quantity < settings.MAX_TICKETS_PER_QUEUE:
+            raise ValueError("capacity_exceeded")
+        
+        ticket = Ticket(
+            title=data.title,
+            complexity=data.complexity,
+            queue_id=data.queue_id,
+            quantity=data.quantity,
+        )
+        db.add(ticket)
+        queue.current_ticket_count += data.quantity
+    else:
+        ticket = Ticket(
+            title=data.title,
+            complexity=data.complexity,
+            queue_id=None,
+            quantity=data.quantity,
+        )
+        db.add(ticket)
+    
+    db.commit()
+    db.refresh(ticket)
+    return ticket
 
 
 def add_ticket_to_queue(db: Session, queue_id: str, data: TicketCreate) -> Ticket:
