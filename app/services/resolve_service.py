@@ -1,4 +1,3 @@
-import time
 from sqlalchemy.orm import Session
 
 from app.config import settings
@@ -6,10 +5,9 @@ from app.models import Ticket
 
 
 def resolve(db: Session, ticket_id: str, effort_logged: int) -> dict:
-    ticket = db.query(Ticket).filter(Ticket.id == ticket_id).first()
+    ticket = db.query(Ticket).filter(Ticket.id == ticket_id).with_for_update().first()
     if not ticket:
         raise ValueError("ticket_not_found")
-    time.sleep(0.05)  # demo: widens race window for concurrent resolve/add
     if ticket.quantity <= 0:
         raise ValueError("out_of_stock")
     if effort_logged < ticket.complexity:
@@ -17,7 +15,8 @@ def resolve(db: Session, ticket_id: str, effort_logged: int) -> dict:
     # No validation that effort_logged or overtime use STANDARD_EFFORT_BLOCKS
     overtime = effort_logged - ticket.complexity
     ticket.quantity -= 1
-    ticket.queue.current_ticket_count -= 1
+    if ticket.queue:
+        ticket.queue.current_ticket_count -= 1
     db.commit()
     db.refresh(ticket)
     return {
