@@ -22,7 +22,7 @@ class Queue(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    tickets = relationship("Ticket", back_populates="queue", cascade="save-update, merge")
+    tickets = relationship("Ticket", back_populates="queue", cascade="all, delete-orphan")
 
 
 class Ticket(Base):
@@ -32,7 +32,7 @@ class Ticket(Base):
     title = Column(String(255), nullable=False)
     complexity = Column(Integer, nullable=False)
     queue_id = Column(CHAR(36), ForeignKey("queues.id", ondelete="SET NULL"), nullable=True)
-    quantity = Column(Integer, nullable=False, default=0)
+    quantity = Column(Integer, nullable=False, default=1)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
