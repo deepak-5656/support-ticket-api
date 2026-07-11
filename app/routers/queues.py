@@ -90,7 +90,7 @@ def add_ticket_to_queue(queue_id: str, data: TicketCreate, db: Session = Depends
         raise
 
 
-@router.post("/queues/{queue_id}/tickets/bulk", response_model=BulkAddResponse)
+@router.post("/queues/{queue_id}/tickets/bulk", response_model=BulkAddResponse, status_code=201)
 def bulk_add_tickets(queue_id: str, body: TicketBulkRequest, db: Session = Depends(get_db)):
     try:
         added = ticket_service.bulk_add_tickets(db, queue_id, body.tickets)
